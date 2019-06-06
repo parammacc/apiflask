@@ -56,6 +56,31 @@ def eliminar(cod):
 		conn.close()
 
 
+@app.route('/articles', methods=['PUT'])
+def modificar():
+	try:
+		_codigo = request.json['codigo']
+		_descripcion = request.json['descripcion']
+		_precio = request.json['precio']
+
+		if _codigo and _descripcion and _precio and request.method == 'PUT':
+			sql = "update articulos set descripcion=%s, precio=%s where codigo=%s"
+			data=(_descripcion, _precio, _codigo)
+			conn = mysql.connect()
+			cursor = conn.cursor()
+			cursor.execute(sql, data)
+			conn.commit()
+			resp = jsonify('Articulo modificado')
+			resp.status_code = 200
+			return resp
+		else:
+			return not_found()
+	except Exception as e:
+		print(e)
+	finally:
+		cursor.close()
+		conn.close()
+
 
 @app.route('/articles', methods=['POST'])
 def anadir():
@@ -102,6 +127,9 @@ def not_found(error=None):
     resp.status_code = 404
 
     return resp
+
+
+
 
 
 if __name__ == "__main__":
