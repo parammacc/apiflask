@@ -5,7 +5,7 @@ from flask import jsonify
 from flask import flash, request
 from werkzeug import generate_password_hash, check_password_hash
 
-@app.route('/articles', method=['GET'])
+@app.route('/articles', methods=['GET'])
 def articles():
 	try:
 		conn = mysql.connect()
@@ -58,19 +58,24 @@ def eliminar(cod):
 
 
 @app.route('/articles', methods=['POST'])
-def add_user():
+def anadir():
 	try:
-		_json = request.json
-		_name = _json['name']
-		_email = _json['email']
-		_password = _json['pwd']
+		'''
+		_codigo = request.args.get('codigo')
+		_descripcion = request.args.get('descripcion')
+		_precio = request.args.get('precio')
+		'''
+		_codigo = request.json['codigo']
+		_descripcion = request.json['descripcion']
+		_precio = request.json['precio']
+		
 		# validate the received values
-		if _name and _email and _password and request.method == 'POST':
+		if _codigo and _descripcion and _precio and request.method == 'POST':
 			#do not save password as a plain text
-			_hashed_password = generate_password_hash(_password)
+		#	_hashed_password = generate_password_hash(_password)
 			# save edits
-			sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
-			data = (_name, _email, _hashed_password,)
+			sql = "INSERT INTO articulos(codigo,descripcion,precio) VALUES(%s, %s, %s)"
+			data = (_codigo,_descripcion,_precio,)
 			conn = mysql.connect()
 			cursor = conn.cursor()
 			cursor.execute(sql, data)
